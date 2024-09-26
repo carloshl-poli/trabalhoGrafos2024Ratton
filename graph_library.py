@@ -3,7 +3,6 @@ import numpy as np
 from functions import *
 import os
 from enum import Enum
-import bitarray
 
 class Constants(Enum):
     BFS = "BFS"
@@ -250,18 +249,21 @@ class Graph:
 
         print(f"Árvore gerada exportada para {filename}")
 
-    def get_distance_Vi_Vj(self, VI, VJ):
+    def get_distance_Vi_Vj(self, VI, VJ, use_BFS_search = True):
         if VI < 1 or VI > self.size or VJ < 1 or VJ > self.size:
             raise ValueError("Invalid arguments for VI or VJ or both")
         if VI == VJ: return 0
-        VI_tree = self.BFS_tree(VI)
-        if VI_tree.is_empty(): return -1
-        levels = {node.data: node.level for node in VI_tree}  # Armazena todos os níveis
-        if VJ in levels:
-            return levels[VJ]
+        if use_BFS_search:
+            VI_tree = self.BFS_tree(VI)
         else:
-            return -1
+            VI_tree = self.DFS_tree(VI)
+        if VI_tree.is_empty(): return -1
 
+        while not VI_tree.is_empty():
+            node = VI_tree.dequeue(True)  # Armazena todos os níveis
+            if VJ == node.data:
+                return node.level
+        return -1
     def get_diameter(self, give_diameter = True, give_subgraph = False):
         current_diameter = 0
         discovered_vec = np.zeros(self.size, dtype=int)
@@ -333,12 +335,12 @@ class Graph:
         
         return index_diameter
 
-    def get_graph_diameter(self):
+    def get_graph_diameter(self, get_exact_value = False):
         current_diameter = 0
         discovered_vec = np.zeros(self.size, dtype=int)
         
         for index in range(self.size):
-            if discovered_vec[index] == 0:
+            if discovered_vec[index] == 0 and not get_exact_value:
                 vertice = index + 1
                 
                 # Calcular o diâmetro da subcomponente
@@ -347,6 +349,13 @@ class Graph:
                 # Atualizar o diâmetro global, se necessário
                 if subcomponent_diameter > current_diameter:
                     current_diameter = subcomponent_diameter
+            elif get_exact_value:
+                vertice = index + 1
+                index_tree = self.BFS_tree(vertice)
+                while not index_tree.is_empty():
+                    node = index_tree.dequeue(True)
+                    if node.level > current_diameter:
+                        current_diameter = node.level
         
         return current_diameter
       
@@ -365,14 +374,17 @@ class Graph:
                 #Marcar todos os vértices dessa subcomponente como descobertos
                 for edge in subgraph.edges:
                     for v in edge:
-                        discovered_vec[v - 1] = 1
+                        vertices = map(int, v.split())
+                        for vertex in vertices:
+                            discovered_vec[vertex - 1] = 1
 
         return sorted(components_list, key=lambda node: node.size, reverse=True)
 
     def get_level_from_tree(self, value, gen_tree):
-        levels = {node.data: node.level for node in gen_tree}
-        if value in levels:
-            return levels[value]
+        while not gen_tree.is_empty():
+            node = gen_tree.dequeue(True)  # Armazena todos os níveis
+            if value == node.data:
+                return node.level
         return -1
 
 

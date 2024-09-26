@@ -52,29 +52,22 @@ def main():
     output_file = "grafo_resultados_teste2.txt"  # Nome do arquivo de saída
 
     # Carregar o grafo de um arquivo
-    grafo_filename = ".vscode\\graph_library\\grafo_5.txt"
+    grafo_filename = "grafo_6.txt"
     # Criação dos grafos
     #matrix_graph = gh.Graph(gh.Constants.MATRIX, grafo_filename)
     vector_graph = gh.Graph(gh.Constants.VECTOR, grafo_filename)
-    bfs_time_matrixVec = []
-    dfs_time_matrixVec = []
-    bfs_time_vectorVec = []
-    dfs_time_vectorVec = []
-    # Medir busca em largura (BFS)
-    #print(matrix_graph.size)
-    print(vector_graph.size)
-
-    def gerar_numeros_aleatorios(X):
-        for _ in range(40):
-            yield randint(1, X)
-
-    for number in gerar_numeros_aleatorios(vector_graph.size):
-        print(number)
+    for tupla in [(10,20),(10,30),(20,30)]:
+        #print(number)
         #start_time = timeit.default_timer()
-        #matrix_graph.BFS_tree(number)  # Criar a instância do grafo
+        distance_BFS = vector_graph.get_distance_Vi_Vj(tupla[0], tupla[1])  # Criar a instância do grafo
         #end_time = timeit.default_timer()
-        #print(f"matrix_graph_BFS_tree: {end_time - start_time}")
-        #write_to_file(f"matrix_graph_BFS_tree.txt", f"Tempo médio de execução Matriz: {end_time - start_time} segundos")
+        print(f"Distance from {tupla[0]} to {tupla[1]} = {distance_BFS} using BFS")
+        write_to_file(f"distance_BFS.txt",f"Distance from {tupla[0]} to {tupla[1]} = {distance_BFS}")
+        #distance_DFS = vector_graph.get_distance_Vi_Vj(start, end, False)  # Criar a instância do grafo
+        #end_time = timeit.default_timer()
+        #print(f"Distance from {start} to {end} = {distance_DFS} using DFS")
+        #write_to_file(f"distance_DFS.txt",f"Distance from {start} to {end} = {distance_DFS}")
+
 
         #bfs_time_matrixVec.append(end_time - start_time)
         #start_time = timeit.default_timer()
@@ -83,39 +76,9 @@ def main():
         #print(f"matrix_graph_DFS_tree: {end_time - start_time}")
         #write_to_file(f"matrix_graph_DFS_tree.txt", f"Tempo médio de execução Matriz: {end_time - start_time} segundos")
         #dfs_time_matrixVec.append(end_time - start_time)
+write_to_file("distance_BFS.txt", "########################")
 
-        start_time = timeit.default_timer()
-        vector_graph.BFS_tree(number)  # Criar a instância do grafo
-        end_time = timeit.default_timer()
-        print(f"vector_graph_BFS_tree: {end_time - start_time}")
-        write_to_file(f"vector_graph_BFS_tree.txt", f"Tempo médio de execução Matriz: {end_time - start_time} segundos")
-        bfs_time_vectorVec.append(end_time - start_time)
-
-        start_time = timeit.default_timer()
-        vector_graph.DFS_tree(number)  # Criar a instância do grafo
-        end_time = timeit.default_timer()
-        print(f"vector_graph_DFS_tree: {end_time - start_time}")
-        write_to_file(f"vector_graph_DFS_tree.txt", f"Tempo médio de execução Matriz: {end_time - start_time} segundos")
-        dfs_time_vectorVec.append(end_time - start_time)
-    
-
-    write_to_file(output_file, "\nBusca em Largura (BFS) - Tempo médio de 100 execuções:")
-    #write_to_file(output_file, f"Tempo médio de execução Matriz: {np.mean(bfs_time_matrixVec):.6f} segundos")
-    write_to_file(output_file, f"Tempo médio de execução Vetor: {np.mean(bfs_time_vectorVec):.6f} segundos")
-
-    write_to_file(output_file, "\nBusca em Profundidade (DFS) - Tempo médio de 100 execuções:")
-    #write_to_file(output_file, f"Tempo médio de execução Matriz: {np.mean(dfs_time_matrixVec):.6f} segundos")
-    write_to_file(output_file, f"Tempo médio de execução Vetor: {np.mean(dfs_time_vectorVec):.6f} segundos")
-
-
-
-
-
-
-
-
-
-
+            
 
 
 '''
